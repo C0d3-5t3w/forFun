@@ -104,7 +104,7 @@ const PHYSICS_EFFECTS: PhysicsEffects = {
 };
 
 const update = (): void => {
-    const context = ctx; // narrowed context
+    const context = ctx; 
     if (!context) return;
     context.clearRect(0, 0, SIM_CONFIG.canvasWidth, SIM_CONFIG.canvasHeight);
     handleCollisions();
@@ -157,88 +157,83 @@ function applyForce(force: Vector): void {
 }
 
 function initTesting(): void {
-    canvas = document.getElementById('physics-canvas') as HTMLCanvasElement;
+    
+    const canvasElem = document.getElementById('physics-canvas');
+    if (!(canvasElem instanceof HTMLCanvasElement)) {
+        console.error("Canvas element not found or of wrong type");
+        return;
+    }
+    canvas = canvasElem;
     ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.error("Failed to obtain 2D rendering context");
+        return;
+    }
     canvas.width = SIM_CONFIG.canvasWidth;
     canvas.height = SIM_CONFIG.canvasHeight;
     
     canvas.addEventListener('click', (e: MouseEvent): void => {
         const rect = canvas.getBoundingClientRect();
         const clickPos: Vector = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-
-        const newVelocity: Vector = {
-            x: (Math.random() - 0.5) * 8,
-            y: (Math.random() - 0.5) * 8
-        };
+        const newVelocity: Vector = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
         const newRadius = Math.random() * 15 + 10;
         objects.push(createBall(clickPos, newVelocity, newRadius, 1, randomColor()));
     });
-
+    
+    
     window.addEventListener('keydown', (e: KeyboardEvent): void => {
-        switch(e.key) {
-            case 'ArrowUp':
-                applyForce({ x: 0, y: -2 });
-                break;
-            case 'ArrowDown':
-                applyForce({ x: 0, y: 2 });
-                break;
-            case 'ArrowLeft':
-                applyForce({ x: -2, y: 0 });
-                break;
-            case 'ArrowRight':
-                applyForce({ x: 2, y: 0 });
-                break;
-            default:
-                if (e.key.toLowerCase() === 'r') {
-                    objects.length = 0;
-                    objects.push(
-                        createBall({ x: 100, y: 100 }, { x: 4, y: -2 }, 20, 1, '#e74c3c'),
-                        createBall({ x: 300, y: 50 }, { x: -3, y: 3 }, 15, 1, '#2ecc71')
-                    );
-                }
-        }
-    });
-
-    window.addEventListener('keydown', (e: KeyboardEvent): void => {
-        if (e.key.toLowerCase() === 'g') {
+        const key = e.key.toLowerCase();
+        if (key === 'arrowup') {
+            applyForce({ x: 0, y: -2 });
+        } else if (key === 'arrowdown') {
+            applyForce({ x: 0, y: 2 });
+        } else if (key === 'arrowleft') {
+            applyForce({ x: -2, y: 0 });
+        } else if (key === 'arrowright') {
+            applyForce({ x: 2, y: 0 });
+        } else if (key === 'r') {
+            objects.length = 0;
+            objects.push(
+                createBall({ x: 100, y: 100 }, { x: 4, y: -2 }, 20, 1, '#e74c3c'),
+                createBall({ x: 300, y: 50 }, { x: -3, y: 3 }, 15, 1, '#2ecc71')
+            );
+        } else if (key === 'g') {
             PHYSICS_EFFECTS.gravityEnabled = !PHYSICS_EFFECTS.gravityEnabled;
             console.log(`Gravity enabled: ${PHYSICS_EFFECTS.gravityEnabled}`);
-        } else if (e.key.toLowerCase() === 'w') {
+        } else if (key === 'w') {
             PHYSICS_EFFECTS.windEnabled = !PHYSICS_EFFECTS.windEnabled;
             console.log(`Wind enabled: ${PHYSICS_EFFECTS.windEnabled}`);
-        } else if (e.key.toLowerCase() === 'd') {
+        } else if (key === 'd') {
             PHYSICS_EFFECTS.dragEnabled = !PHYSICS_EFFECTS.dragEnabled;
             console.log(`Drag enabled: ${PHYSICS_EFFECTS.dragEnabled}`);
         }
     });
-
+    
     const controlButtons = [
-        { id: 'force-up', force: { x: 0, y: -2 } },
-        { id: 'force-down', force: { x: 0, y: 2 } },
-        { id: 'force-left', force: { x: -2, y: 0 } },
+        { id: 'force-up',    force: { x: 0, y: -2 } },
+        { id: 'force-down',  force: { x: 0, y: 2 } },
+        { id: 'force-left',  force: { x: -2, y: 0 } },
         { id: 'force-right', force: { x: 2, y: 0 } }
     ];
-
     controlButtons.forEach(control => {
         const btn = document.getElementById(control.id);
         if (btn) {
             btn.addEventListener('click', () => applyForce(control.force));
         }
     });
-
+    
     const toggleButtons = [
         { id: 'toggle-gravity', action: () => { PHYSICS_EFFECTS.gravityEnabled = !PHYSICS_EFFECTS.gravityEnabled; console.log(`Gravity: ${PHYSICS_EFFECTS.gravityEnabled}`); } },
         { id: 'toggle-wind',    action: () => { PHYSICS_EFFECTS.windEnabled    = !PHYSICS_EFFECTS.windEnabled;    console.log(`Wind: ${PHYSICS_EFFECTS.windEnabled}`); } },
         { id: 'toggle-drag',    action: () => { PHYSICS_EFFECTS.dragEnabled    = !PHYSICS_EFFECTS.dragEnabled;    console.log(`Drag: ${PHYSICS_EFFECTS.dragEnabled}`); } }
     ];
-
     toggleButtons.forEach(control => {
         const btn = document.getElementById(control.id);
         if (btn) {
             btn.addEventListener('click', control.action);
         }
     });
-
+    
     update();
 }
 
@@ -247,3 +242,7 @@ if (document.readyState === 'loading') {
 } else {
     initTesting();
 }
+
+(window as any).initTesting = initTesting;
+
+export {};

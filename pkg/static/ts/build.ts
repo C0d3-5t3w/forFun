@@ -161,3 +161,5 @@ const initBuild = (): void => {
 };
 
 window.addEventListener('DOMContentLoaded', initBuild);
+
+export {};

@@ -149,6 +149,11 @@ jobs:
           else
             echo "Note: pkg/static/sass/fonts.scss not found - skipping compilation"
           fi
+          if [ -f "pkg/static/sass/testing.scss" ]; then
+            sass pkg/static/sass/testing.scss:pkg/static/css/testing.css
+          else
+            echo "Note: pkg/static/sass/testing.scss not found - skipping compilation"
+          fi
           
       - name: Setup Pages
         uses: actions/configure-pages@v5

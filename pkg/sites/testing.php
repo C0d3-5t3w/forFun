@@ -6,6 +6,7 @@
     <title>Testing</title>
     <link rel="stylesheet" href="../static/css/style.css">
     <link rel="stylesheet" href="../static/css/fonts.css">
+    <link rel="stylesheet" href="../static/css/testing.css">
 </head>
 <body class="retro-content">
     <header class="retro-header">
@@ -25,7 +26,7 @@
                 <h1>Welcome to the Testing Room</h1>
                 <h2>Retro Physics Engine Demo</h2>
             </section>
-            <section id="physics-test-room" class="cool-section retro-fade-in">
+            <section id="physics-test-room" class="cool-section retro-fade-in testing-format-override">
                 <h2>Physics Engine Testing Room</h2>
                 <div id="physics-container">
                     <canvas id="physics-canvas" width="600" height="400"></canvas>
@@ -46,16 +47,13 @@
             </section>
         </main>
     </div>
-    <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const gameScript = document.createElement('script');
-            gameScript.type = 'module';
-            gameScript.src = '../static/js/testing.js';
-            document.body.appendChild(gameScript);
-        });
-    </script> -->
-    <!-- <script src="../static/js/build.js" type="module"></script> -->
-    <script src="../static/js/build.js"></script>
-    <script src="../static/js/testing.js"></script>
+    <script src="../static/js/build.js" type="module"></script>
+    <script type="module">
+      if (document.readyState === 'loading') {
+         window.addEventListener('DOMContentLoaded', initTesting);
+      } else {
+         initTesting();
+      }
+    </script>
 </body>
 </html>
