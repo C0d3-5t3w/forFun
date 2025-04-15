@@ -91,20 +91,37 @@ const handleCollisions = (): void => {
     }
 };
 
+interface PhysicsEffects {
+    gravityEnabled: boolean;
+    windEnabled: boolean;
+    dragEnabled: boolean;
+}
+
+const PHYSICS_EFFECTS: PhysicsEffects = {
+    gravityEnabled: true,
+    windEnabled: true,
+    dragEnabled: true,
+};
+
 const update = (): void => {
     if (!ctx) return;
     ctx.clearRect(0, 0, SIM_CONFIG.canvasWidth, SIM_CONFIG.canvasHeight);
     handleCollisions();
 
     objects.forEach((obj: PhysicsObject) => {
-        obj.velocity.x += SIM_CONFIG.gravity.x + SIM_CONFIG.wind.x;
-        obj.velocity.y += SIM_CONFIG.gravity.y + SIM_CONFIG.wind.y;
+        
+        const gravity = PHYSICS_EFFECTS.gravityEnabled ? SIM_CONFIG.gravity : { x: 0, y: 0 };
+        const wind    = PHYSICS_EFFECTS.windEnabled    ? SIM_CONFIG.wind    : { x: 0, y: 0 };
+        obj.velocity.x += gravity.x + wind.x;
+        obj.velocity.y += gravity.y + wind.y;
 
         obj.position.x += obj.velocity.x;
         obj.position.y += obj.velocity.y;
 
-        obj.velocity.x *= SIM_CONFIG.drag;
-        obj.velocity.y *= SIM_CONFIG.drag;
+        
+        const dragFactor = PHYSICS_EFFECTS.dragEnabled ? SIM_CONFIG.drag : 1;
+        obj.velocity.x *= dragFactor;
+        obj.velocity.y *= dragFactor;
 
         if (obj.position.x + obj.radius > SIM_CONFIG.canvasWidth) {
             obj.position.x = SIM_CONFIG.canvasWidth - obj.radius;
@@ -143,13 +160,80 @@ canvas.addEventListener('click', (e: MouseEvent): void => {
     objects.push(createBall(clickPos, newVelocity, newRadius, 1, randomColor()));
 });
 
+
+function applyForce(force: Vector): void {
+    objects.forEach((obj: PhysicsObject) => {
+        obj.velocity.x += force.x;
+        obj.velocity.y += force.y;
+    });
+}
+
+
 window.addEventListener('keydown', (e: KeyboardEvent): void => {
-    if (e.key.toLowerCase() === 'r') {
-        objects.length = 0;
-        objects.push(
-            createBall({ x: 100, y: 100 }, { x: 4, y: -2 }, 20, 1, '#e74c3c'),
-            createBall({ x: 300, y: 50 }, { x: -3, y: 3 }, 15, 1, '#2ecc71')
-        );
+    switch(e.key) {
+        case 'ArrowUp':
+            applyForce({ x: 0, y: -2 });
+            break;
+        case 'ArrowDown':
+            applyForce({ x: 0, y: 2 });
+            break;
+        case 'ArrowLeft':
+            applyForce({ x: -2, y: 0 });
+            break;
+        case 'ArrowRight':
+            applyForce({ x: 2, y: 0 });
+            break;
+        default:
+            if (e.key.toLowerCase() === 'r') {
+                objects.length = 0;
+                objects.push(
+                    createBall({ x: 100, y: 100 }, { x: 4, y: -2 }, 20, 1, '#e74c3c'),
+                    createBall({ x: 300, y: 50 }, { x: -3, y: 3 }, 15, 1, '#2ecc71')
+                );
+            }
+    }
+});
+
+
+window.addEventListener('keydown', (e: KeyboardEvent): void => {
+    if (e.key.toLowerCase() === 'g') {
+        PHYSICS_EFFECTS.gravityEnabled = !PHYSICS_EFFECTS.gravityEnabled;
+        console.log(`Gravity enabled: ${PHYSICS_EFFECTS.gravityEnabled}`);
+    } else if (e.key.toLowerCase() === 'w') {
+        PHYSICS_EFFECTS.windEnabled = !PHYSICS_EFFECTS.windEnabled;
+        console.log(`Wind enabled: ${PHYSICS_EFFECTS.windEnabled}`);
+    } else if (e.key.toLowerCase() === 'd') {
+        PHYSICS_EFFECTS.dragEnabled = !PHYSICS_EFFECTS.dragEnabled;
+        console.log(`Drag enabled: ${PHYSICS_EFFECTS.dragEnabled}`);
+    }
+});
+
+
+const controlButtons = [
+    { id: 'force-up', force: { x: 0, y: -2 } },
+    { id: 'force-down', force: { x: 0, y: 2 } },
+    { id: 'force-left', force: { x: -2, y: 0 } },
+    { id: 'force-right', force: { x: 2, y: 0 } }
+];
+
+controlButtons.forEach(control => {
+    const btn = document.getElementById(control.id);
+    if (btn) {
+        btn.addEventListener('click', () => applyForce(control.force));
+    }
+});
+
+
+const toggleButtons = [
+    { id: 'toggle-gravity', action: () => { PHYSICS_EFFECTS.gravityEnabled = !PHYSICS_EFFECTS.gravityEnabled; console.log(`Gravity: ${PHYSICS_EFFECTS.gravityEnabled}`); } },
+    { id: 'toggle-wind',    action: () => { PHYSICS_EFFECTS.windEnabled    = !PHYSICS_EFFECTS.windEnabled;    console.log(`Wind: ${PHYSICS_EFFECTS.windEnabled}`); } },
+    { id: 'toggle-drag',    action: () => { PHYSICS_EFFECTS.dragEnabled    = !PHYSICS_EFFECTS.dragEnabled;    console.log(`Drag: ${PHYSICS_EFFECTS.dragEnabled}`); } }
+];
+
+toggleButtons.forEach(control => {
+    const btn = document.getElementById(control.id);
+    if (btn) {
+        btn.addEventListener('click', control.action);
     }
 });
 
