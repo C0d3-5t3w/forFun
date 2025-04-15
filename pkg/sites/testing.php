@@ -46,15 +46,16 @@
             </section>
         </main>
     </div>
-    <script>
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const gameScript = document.createElement('script');
             gameScript.type = 'module';
             gameScript.src = '../static/js/testing.js';
             document.body.appendChild(gameScript);
         });
-    </script>
-    <script src="../static/js/build.js" type="module"></script>
-    <!-- <script src="../static/js/testing.js"></script> -->
+    </script> -->
+    <!-- <script src="../static/js/build.js" type="module"></script> -->
+    <script src="../static/js/build.js"></script>
+    <script src="../static/js/testing.js"></script>
 </body>
 </html>
