@@ -170,6 +170,14 @@ main {
   background-color: var(--btn-alt-hover);
 }
 
+#physics-container {
+  margin: 20px auto;
+  max-width: 620px;
+  padding: 10px;
+  border: 2px solid var(--color-primary);
+  background-color: #fff;
+}
+
 .site-footer {
   background-color: var(--color-denary);
   color: var(--color-octonary);
