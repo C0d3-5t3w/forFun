@@ -60,7 +60,7 @@ jobs:
             "compilerOptions": {
               "target": "es5",
               "lib": ["es2017", "dom"],
-              "module": "None",
+              "module": "ES2020",
               "outDir": "./pkg/static/js",
               "rootDir": "./pkg/static/ts",
               "strict": true,
