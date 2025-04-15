@@ -58,7 +58,8 @@ jobs:
         run: |
           echo '{
             "compilerOptions": {
-              "target": "ES6",
+              "target": "es5",
+              "lib": ["es2017", "dom"],
               "module": "None",
               "outDir": "./pkg/static/js",
               "rootDir": "./pkg/static/ts",
