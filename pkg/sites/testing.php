@@ -10,7 +10,7 @@
     <header class="site-header">
         <nav class="site-nav">
             <ul>
-                <li><a href="../..index.html">Home</a></li>
+                <li><a href="../../index.html">Home</a></li>
                 <li><a href="testing.html">Testing</a></li>
             </ul>
         </nav>

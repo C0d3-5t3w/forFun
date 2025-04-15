@@ -13,8 +13,8 @@
 
 body {
   font-family: 'Helvetica Neue', sans-serif;
-  background-color: var(--color-octonary);
-  color: var(--color-septenary);
+  background-color: var(--color-septenary);
+  color: var(--color-octonary);
   margin: 0;
   padding: 0;
 }
@@ -44,7 +44,7 @@ body {
 
 .site-nav a {
   text-decoration: none;
-  color: var(--color-octonary);
+  color: var(--color-septenary);
   transition: color 0.3s;
 }
 
@@ -54,7 +54,7 @@ body {
 
 .site-footer {
   background-color: var(--color-denary);
-  color: var(--color-octonary);
+  color: var(--color-septenary);
   text-align: center;
   padding: 15px 0;
   margin-top: 20px;
