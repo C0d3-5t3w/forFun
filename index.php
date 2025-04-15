@@ -25,7 +25,7 @@
         <h1 class="fade-in">Welcome to TypeScript Goodies</h1>
         <p>Explore the power of TypeScript with this basic testing website.</p>
     </main>
-    <script src="/pkg/assets/js/main.js"></script>
+    <script src="/pkg/assets/js/Main.js"></script>
     <script src="/pkg/assets/js/menu.js"></script>
     <script src="/pkg/assets/js/mobile.js"></script>
 </body>

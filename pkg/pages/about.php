@@ -24,7 +24,7 @@
         <h1 class="fade-in">About TypeScript Goodies</h1>
         <p>This website is a playground for testing TypeScript features and functionality.</p>
     </main>
-    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/Main.js"></script>
     <script src="../assets/js/menu.js"></script>
     <script src="../assets/js/mobile.js"></script>
 </body>
