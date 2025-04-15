@@ -135,13 +135,13 @@ jobs:
       - name: Compile Sass
         run: |
           mkdir -p pkg/static/css
-          if [ -f "pkg/static/sass/main.scss" ]; then
-            sass pkg/static/sass/main.scss:pkg/static/css/main.css
+          if [ -f "pkg/static/sass/style.scss" ]; then
+            sass pkg/static/sass/style.scss:pkg/static/css/style.css
           fi
-          if [ -f "pkg/static/sass/alt.scss" ]; then
-            sass pkg/static/sass/alt.scss:pkg/static/css/alt.css
+          if [ -f "pkg/static/sass/fonts.scss" ]; then
+            sass pkg/static/sass/fonts.scss:pkg/static/css/fonts.css
           else
-            echo "Note: pkg/static/sass/alt.scss not found - skipping compilation"
+            echo "Note: pkg/static/sass/fonts.scss not found - skipping compilation"
           fi
           
       - name: Setup Pages
