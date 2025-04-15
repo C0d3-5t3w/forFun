@@ -176,6 +176,11 @@ main {
   padding: 10px;
   border: 2px solid var(--color-primary);
   background-color: #fff;
+  
+  #physics-canvas {
+    display: block;
+    margin: 0 auto;
+  }
 }
 
 .site-footer {
