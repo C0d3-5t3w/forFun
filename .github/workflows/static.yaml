@@ -60,24 +60,24 @@ jobs:
             "compilerOptions": {
               "target": "ES6",
               "module": "None",
-              "outDir": "./pkg/assets/js",
-              "rootDir": "./pkg/assets/ts",
+              "outDir": "./pkg/static/js",
+              "rootDir": "./pkg/static/ts",
               "strict": true,
               "esModuleInterop": true,
               "skipLibCheck": true,
               "forceConsistentCasingInFileNames": true
             },
-            "include": ["./pkg/assets/ts/**/*"]
+            "include": ["./pkg/static/ts/**/*"]
           }' > tsconfig.json
       
       - name: List TypeScript files
         run: |
           echo "Found TypeScript files:"
-          find ./pkg/assets/ts -name "*.ts" | sort
+          find ./pkg/static/ts -name "*.ts" | sort
       
       - name: Compile TypeScript
         run: |
-          mkdir -p pkg/assets/js
+          mkdir -p pkg/static/js
           echo "Compiling TypeScript files..."
           # Explicitly list important TypeScript files for visibility
           echo "Important files to compile"
@@ -91,21 +91,21 @@ jobs:
       - name: Verify JavaScript output
         run: |
           echo "Generated JavaScript files:"
-          find ./pkg/assets/js -name "*.js" | sort
+          find ./pkg/static/js -name "*.js" | sort
 
       - name: Lint JavaScript
         run: |
-          npx eslint pkg/assets/js/*.js --fix || true
+          npx eslint pkg/static/js/*.js --fix || true
           
       - name: Minify JavaScript
         run: |
-          for file in pkg/assets/js/*.js; do
+          for file in pkg/static/js/*.js; do
             if [ -f "$file" ]; then
               echo "Minifying $file"
               npx terser "$file" \
                 --compress \
                 --mangle \
-                --source-map "base='pkg/assets/js',root='pkg/assets/js',url='$(basename "$file").map'" \
+                --source-map "base='pkg/static/js',root='pkg/static/js',url='$(basename "$file").map'" \
                 --output "${file%.js}.min.js"
               if [ -f "${file%.js}.min.js" ]; then
                 mv "${file%.js}.min.js" "$file"
@@ -133,14 +133,14 @@ jobs:
           
       - name: Compile Sass
         run: |
-          mkdir -p pkg/assets/css
-          if [ -f "pkg/assets/sass/main.scss" ]; then
-            sass pkg/assets/sass/main.scss:pkg/assets/css/main.css
+          mkdir -p pkg/static/css
+          if [ -f "pkg/static/sass/main.scss" ]; then
+            sass pkg/static/sass/main.scss:pkg/static/css/main.css
           fi
-          if [ -f "pkg/assets/sass/alt.scss" ]; then
-            sass pkg/assets/sass/alt.scss:pkg/assets/css/alt.css
+          if [ -f "pkg/static/sass/alt.scss" ]; then
+            sass pkg/static/sass/alt.scss:pkg/static/css/alt.css
           else
-            echo "Note: pkg/assets/sass/alt.scss not found - skipping compilation"
+            echo "Note: pkg/static/sass/alt.scss not found - skipping compilation"
           fi
           
       - name: Setup Pages
