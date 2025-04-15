@@ -5,11 +5,11 @@ all: clean go php ts sass run
 clean:
 	@go clean
 	@rm -rf vendor
-	@rm -rf pkg/assets/css
-	@rm -rf pkg/assets/js
+	@rm -rf pkg/static/css
+	@rm -rf pkg/static/js
 	@rm -rf tsconfig.json
 	@rm -rf package-lock.json
-	@rm -rf pkg/pages/*.html
+	@rm -rf pkg/sites/*.html
 	@rm -rf *.html
 
 go:
@@ -19,7 +19,7 @@ go:
 	@go mod verify
 
 php:
-	@find . -type f -path "./pkg/pages/*.php" | sort
+	@find . -type f -path "./pkg/sites/*.php" | sort
 	@find . -type f -path "./*.php" | sort | \
 	  xargs -I {} sh -c '\
 	    file="{}"; \
@@ -28,7 +28,7 @@ php:
 	      html_file="$$dir/$$(basename "$${file%.php}.html")"; \
 	      php "$$file" > "$$html_file"; \
 	    fi'
-	@find . -type f -path "./pkg/pages/*.php" -exec sh -c '\
+	@find . -type f -path "./pkg/sites/*.php" -exec sh -c '\
 	  for file; do \
 	    if [ "$${file##*.}" = "php" ]; then \
 	      dir=$$(dirname "$$file"); \
@@ -40,10 +40,10 @@ php:
 
 ts:
 	@tsc --init
-	@tsc --project tsconfig.json --outDir pkg/assets/js --sourceMap
+	@tsc --project tsconfig.json --outDir pkg/static/js --sourceMap
 
 sass:
-	@sass pkg/assets/sass:pkg/assets/css --style compressed --update
+	@sass pkg/static/sass:pkg/static/css --style compressed --update
 
 run:
 	@go run ${MAIN_PATH}
