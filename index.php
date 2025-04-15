@@ -6,10 +6,17 @@
     <title>forFun</title>
     <link rel="stylesheet" href="pkg/static/css/style.css">
 </head>
-<body class="content">
-    <h1 class="fade-in">Welcome to TypeScript Goodies</h1>
-    <h2 class="fade-in">Explore the power of TypeScript with this basic testing website.</h2>
-    <h3 class="fade-in"><a href="pkg/sites/testing.html">testing</a></h3>
+<body class="container">
+    <header class="site-header">
+        <nav class="site-nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="pkg/sites/testing.html">Testing</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1 class="fade-in">Welcome!</h1>
+    <h2 class="fade-in">👍🏼</h2>
     <script src="pkg/static/js/build.js" type="module"></script>
 </body>
 </html>
