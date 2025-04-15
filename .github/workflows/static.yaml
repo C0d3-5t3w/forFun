@@ -1,0 +1,156 @@
+name: Deploy static content to Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          npm init -y
+          npm install -g sass
+          npm install --save-dev terser eslint typescript
+          
+      - name: Create eslint config
+        run: |
+          echo '{
+            "env": {
+              "browser": true,
+              "es2021": true
+            },
+            "extends": "eslint:recommended",
+            "parserOptions": {
+              "ecmaVersion": 2021,
+              "sourceType": "module"
+            }
+          }' > .eslintrc.json
+          
+      - name: Create tsconfig.json
+        run: |
+          echo '{
+            "compilerOptions": {
+              "target": "ES6",
+              "module": "None",
+              "outDir": "./pkg/assets/js",
+              "rootDir": "./pkg/assets/ts",
+              "strict": true,
+              "esModuleInterop": true,
+              "skipLibCheck": true,
+              "forceConsistentCasingInFileNames": true
+            },
+            "include": ["./pkg/assets/ts/**/*"]
+          }' > tsconfig.json
+      
+      - name: List TypeScript files
+        run: |
+          echo "Found TypeScript files:"
+          find ./pkg/assets/ts -name "*.ts" | sort
+      
+      - name: Compile TypeScript
+        run: |
+          mkdir -p pkg/assets/js
+          echo "Compiling TypeScript files..."
+          # Explicitly list important TypeScript files for visibility
+          echo "Important files to compile"
+          npx tsc --listFiles
+          if [ $? -ne 0 ]; then
+            echo "TypeScript compilation failed. Trying to continue with existing JS files."
+          else
+            echo "TypeScript compilation successful."
+          fi
+          
+      - name: Verify JavaScript output
+        run: |
+          echo "Generated JavaScript files:"
+          find ./pkg/assets/js -name "*.js" | sort
+
+      - name: Lint JavaScript
+        run: |
+          npx eslint pkg/assets/js/*.js --fix || true
+          
+      - name: Minify JavaScript
+        run: |
+          for file in pkg/assets/js/*.js; do
+            if [ -f "$file" ]; then
+              echo "Minifying $file"
+              npx terser "$file" \
+                --compress \
+                --mangle \
+                --source-map "base='pkg/assets/js',root='pkg/assets/js',url='$(basename "$file").map'" \
+                --output "${file%.js}.min.js"
+              if [ -f "${file%.js}.min.js" ]; then
+                mv "${file%.js}.min.js" "$file"
+                echo "✅ Successfully minified $file"
+              else
+                echo "⚠️ Warning: Minification of $file may have failed, keeping original"
+              fi
+            fi
+          done
+          
+      - name: Process PHP files
+        run: |
+          echo "Listing all PHP files found in repository:"
+          find . -type f -name "*.php" | sort
+          
+          echo "\nProcessing PHP files..."
+          find . -type f -name "*.php" -exec sh -c '
+            echo "Converting $1 to ${1%.php}.html"
+            php "$1" > "${1%.php}.html"
+            rm "$1"
+          ' sh {} \;
+          
+          echo "\nVerifying conversion - HTML files created:"
+          find . -type f -name "*.html" | grep -v "node_modules" | sort
+          
+      - name: Compile Sass
+        run: |
+          mkdir -p pkg/assets/css
+          if [ -f "pkg/assets/sass/main.scss" ]; then
+            sass pkg/assets/sass/main.scss:pkg/assets/css/main.css
+          fi
+          if [ -f "pkg/assets/sass/alt.scss" ]; then
+            sass pkg/assets/sass/alt.scss:pkg/assets/css/alt.css
+          else
+            echo "Note: pkg/assets/sass/alt.scss not found - skipping compilation"
+          fi
+          
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
