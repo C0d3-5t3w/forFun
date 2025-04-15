@@ -16,7 +16,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Clean(r.URL.Path)
 		if path == "/" {
-			http.ServeFile(w, r, "index.html")
+			http.ServeFile(w, r, "Index.html")
 			return
 		}
 		if strings.HasPrefix(path, "/pkg/pages/") {

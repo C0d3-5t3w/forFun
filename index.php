@@ -26,7 +26,5 @@
         <p>Explore the power of TypeScript with this basic testing website.</p>
     </main>
     <script src="/pkg/assets/js/Main.js" type="module"></script>
-    <script src="/pkg/assets/js/menu.js"></script>
-    <script src="/pkg/assets/js/mobile.js"></script>
 </body>
 </html>

@@ -14,8 +14,8 @@
             <div class="menu-item">
                 <a href="/" class="flash">Home</a>
                 <div class="dropdown">
-                    <a href="../pages/about.php" class="flash">About</a>
-                    <a href="../pages/particles.php" class="flash">Particles</a>
+                    <a href="../pages/about.html" class="flash">About</a>
+                    <a href="../pages/particles.html" class="flash">Particles</a>
                 </div>
             </div>
         </nav>
@@ -24,8 +24,6 @@
         <h1 class="fade-in">Particles Playground</h1>
         <div id="particle-container"></div>
     </main>
-    <script src="../assets/js/particles.js" type="module"></script>
-    <script src="../assets/js/menu.js"></script>
-    <script src="../assets/js/mobile.js"></script>
+    <script src="../assets/js/Particles.js" type="module"></script>
 </body>
 </html>

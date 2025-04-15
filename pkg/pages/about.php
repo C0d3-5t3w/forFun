@@ -25,7 +25,5 @@
         <p>This website is a playground for testing TypeScript features and functionality.</p>
     </main>
     <script src="../assets/js/Main.js" type="module"></script>
-    <script src="../assets/js/menu.js"></script>
-    <script src="../assets/js/mobile.js"></script>
 </body>
 </html>

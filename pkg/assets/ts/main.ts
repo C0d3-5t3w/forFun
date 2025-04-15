@@ -1,5 +1,5 @@
-import { initMenu } from './menu';
-import { initAnimations } from './animations';
+import { initMenu } from './Menu';
+import { initAnimations } from './Animations';
 
 document.addEventListener('DOMContentLoaded', () => {
     initMenu();
