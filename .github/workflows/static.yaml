@@ -129,6 +129,9 @@ jobs:
             rm "$1"
           ' sh {} \;
           
+          # Replace .ts references with .js in generated HTML files
+          find . -type f -name "*.html" -exec sed -i 's/\.ts/\.js/g' {} \;
+          
           echo "\nVerifying conversion - HTML files created:"
           find . -type f -name "*.html" | grep -v "node_modules" | sort
           

@@ -29,7 +29,7 @@ const initFadeIn = (): void => {
 const initBackToTop = (): void => {
     const backToTopButton: HTMLButtonElement = document.createElement('button');
     backToTopButton.id = 'back-to-top';
-    backToTopButton.innerText = '↑ Back to Top';
+    backToTopButton.innerText = '↑Top↑';
     document.body.appendChild(backToTopButton);
     backToTopButton.addEventListener('click', (e: MouseEvent): void => {
         window.scrollTo({ top: 0, behavior: 'smooth' });

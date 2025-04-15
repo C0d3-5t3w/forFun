@@ -240,4 +240,8 @@ toggleButtons.forEach(control => {
 canvas.width = SIM_CONFIG.canvasWidth;
 canvas.height = SIM_CONFIG.canvasHeight;
 
-window.addEventListener('DOMContentLoaded', update);
+if (document.readyState === 'loading') {
+    window.addEventListener('DOMContentLoaded', update);
+} else {
+    update();
+}

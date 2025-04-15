@@ -28,9 +28,7 @@
             <section id="physics-test-room" class="cool-section retro-fade-in">
                 <h2>Physics Engine Testing Room</h2>
                 <div id="physics-container">
-                    <canvas id="physics-canvas" width="600" height="400">
-                        <script src="../static/js/testing.js" type="module"></script>
-                    </canvas>
+                    <canvas id="physics-canvas" width="600" height="400"></canvas>
                 </div>
             </section>
             <section id="controls-panel" class="retro-fade-in">
@@ -48,9 +46,10 @@
             </section>
         </main>
     </div>
-    <script src="../static/js/build.js" type="module"></script>
     <footer class="retro-footer">
         <p>&copy; <?php echo date("Y"); ?> forFun</p>
     </footer>
+    <script src="../static/js/build.js" type="module"></script>
+    <script src="../static/js/testing.js" type="module"></script>
 </body>
 </html>
