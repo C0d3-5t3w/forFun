@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>forFun</title>
     <link rel="stylesheet" href="pkg/static/css/style.css">
+    <link rel="stylesheet" href="pkg/static/css/fonts.css">
 </head>
 <body class="container">
     <header class="site-header">
