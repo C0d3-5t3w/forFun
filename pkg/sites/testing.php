@@ -20,12 +20,8 @@
             </ul>
         </nav>
     </header>
-    <div class="retro-container">
+    <div>
         <main>
-            <section class="intro retro-fade-in">
-                <h1>Welcome to the Testing Room</h1>
-                <h2>Retro Physics Engine Demo</h2>
-            </section>
             <section id="physics-test-room" class="cool-section retro-fade-in testing-format-override">
                 <h2>Physics Engine Testing Room</h2>
                 <div id="physics-container">
