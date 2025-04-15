@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About - TypeScript Goodies</title>
-    <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/menu.css">
-    <link rel="stylesheet" href="../assets/css/mobile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/Main.css">
+    <link rel="stylesheet" href="../assets/css/Menu.css">
+    <link rel="stylesheet" href="../assets/css/Mobile.css">
+    <link rel="stylesheet" href="../assets/css/Fonts.css">
 </head>
 <body>
 <header>
@@ -14,8 +16,8 @@
             <div class="menu-item">
                 <a href="/" class="flash">Home</a>
                 <div class="dropdown">
-                    <a href="../pages/about.html" class="flash">About</a>
-                    <a href="../pages/particles.html" class="flash">Particles</a>
+                    <a href="../pages/About.html" class="flash">About</a>
+                    <a href="../pages/Particles.html" class="flash">Particles</a>
                 </div>
             </div>
         </nav>
