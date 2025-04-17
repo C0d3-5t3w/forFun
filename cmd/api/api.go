@@ -3,9 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
-	"time"
 
 	"github.com/C0d3-5t3w/forFun/cmd/api/helper"
 	"github.com/C0d3-5t3w/forFun/cmd/api/message"
@@ -16,15 +16,13 @@ import (
 
 var chatStore *storage.ChatStore
 
-// InitAPI initializes the chat API
 func InitAPI() error {
-	// Initialize configuration
+
 	err := config.Load(filepath.Join("pkg", "config", "config.yaml"))
 	if err != nil {
 		return fmt.Errorf("failed to load configuration: %w", err)
 	}
 
-	// Initialize storage
 	cfg := config.Get()
 	chatStore, err = storage.NewChatStore(cfg.Storage.Path)
 	if err != nil {
@@ -34,19 +32,18 @@ func InitAPI() error {
 	return nil
 }
 
-// SetupRoutes sets up the API routes
 func SetupRoutes() {
 	http.HandleFunc("/api/messages", handleMessages)
 }
 
 func handleMessages(w http.ResponseWriter, r *http.Request) {
-	// Enable CORS
+
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, Cache-Control")
 
-	// Handle preflight request
 	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -55,21 +52,23 @@ func handleMessages(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		messages := chatStore.GetAllMessages()
-		helper.JSONResponse(w, http.StatusOK, messages)
+		if err := helper.JSONResponse(w, http.StatusOK, messages); err != nil {
+			log.Printf("Error sending JSON response: %v", err)
+		}
 
 	case "POST":
-		// Parse message from request
+
 		var msg struct {
 			Content  string `json:"content"`
 			Username string `json:"username"`
 		}
 
 		if err := json.NewDecoder(r.Body).Decode(&msg); err != nil {
+			log.Printf("Error decoding request: %v", err)
 			helper.ErrorResponse(w, http.StatusBadRequest, "Invalid request format")
 			return
 		}
 
-		// Validate message
 		if msg.Content == "" {
 			helper.ErrorResponse(w, http.StatusBadRequest, "Message content cannot be empty")
 			return
@@ -81,25 +80,25 @@ func handleMessages(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Set default username if not provided
 		if msg.Username == "" {
 			msg.Username = "Anonymous"
 		}
 
-		// Create and store new message
-		newMsg := message.Message{
-			ID:        uuid.New().String(),
-			Content:   msg.Content,
-			Username:  msg.Username,
-			Timestamp: time.Now(),
-		}
+		newMsg := message.NewMessage(
+			uuid.New().String(),
+			msg.Content,
+			msg.Username,
+		)
 
 		if err := chatStore.AddMessage(newMsg); err != nil {
+			log.Printf("Error saving message: %v", err)
 			helper.ErrorResponse(w, http.StatusInternalServerError, "Failed to save message")
 			return
 		}
 
-		helper.JSONResponse(w, http.StatusCreated, newMsg)
+		if err := helper.JSONResponse(w, http.StatusCreated, newMsg); err != nil {
+			log.Printf("Error sending JSON response: %v", err)
+		}
 
 	default:
 		helper.ErrorResponse(w, http.StatusMethodNotAllowed, "Method not allowed")

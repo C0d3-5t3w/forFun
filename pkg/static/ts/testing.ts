@@ -231,7 +231,7 @@ class PhysicsSimulation {
     }
 }
 
-// Add new interfaces and classes for chat functionality
+
 interface ChatMessage {
     id: string;
     content: string;
@@ -244,22 +244,27 @@ class ChatApp {
     private inputElement: HTMLInputElement | null = null;
     private usernameElement: HTMLInputElement | null = null;
     private submitButton: HTMLButtonElement | null = null;
+    private statusElement: HTMLElement | null = null;
     private apiUrl: string = '/api/messages';
     private messages: ChatMessage[] = [];
-    private refreshInterval: number = 3000; // 3 seconds
+    private refreshInterval: number = 3000; 
+    private isConnected: boolean = true;
+    private retryCount: number = 0;
+    private maxRetries: number = 5;
+    private debug: boolean = false;
 
     public initChat(): void {
         this.messagesElement = document.getElementById('chat-messages');
         this.inputElement = document.getElementById('message-input') as HTMLInputElement;
         this.usernameElement = document.getElementById('username-input') as HTMLInputElement;
         this.submitButton = document.getElementById('send-message') as HTMLButtonElement;
+        this.statusElement = document.getElementById('connection-status');
 
         if (!this.messagesElement || !this.inputElement || !this.submitButton || !this.usernameElement) {
             console.error("Chat elements not found");
             return;
         }
 
-        // Set up event listeners
         this.submitButton.addEventListener('click', () => this.sendMessage());
         this.inputElement.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -267,22 +272,46 @@ class ChatApp {
             }
         });
 
-        // Load stored username if available
         const storedUsername = localStorage.getItem('chatUsername');
         if (storedUsername) {
             this.usernameElement.value = storedUsername;
         }
 
-        // Initial fetch
         this.fetchMessages();
 
-        // Set up periodic refresh
         setInterval(() => this.fetchMessages(), this.refreshInterval);
     }
 
+    private updateConnectionStatus(isConnected: boolean, message?: string): void {
+        if (!this.statusElement) return;
+        
+        this.isConnected = isConnected;
+        
+        if (isConnected) {
+            this.statusElement.textContent = "Connected";
+            this.statusElement.classList.remove('disconnected');
+            this.statusElement.classList.add('connected');
+            this.submitButton?.removeAttribute('disabled');
+            this.retryCount = 0;
+        } else {
+            this.statusElement.textContent = message || "Connection lost";
+            this.statusElement.classList.remove('connected');
+            this.statusElement.classList.add('disconnected');
+            this.submitButton?.setAttribute('disabled', 'disabled');
+        }
+    }
+
     private async fetchMessages(): Promise<void> {
+        this.log('Fetching messages...');
         try {
-            const response = await fetch(this.apiUrl);
+            const response = await fetch(this.apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Cache-Control': 'no-cache'
+                }
+            });
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -290,29 +319,48 @@ class ChatApp {
             const messages: ChatMessage[] = await response.json();
             this.messages = messages;
             this.renderMessages();
+            
+            this.log(`Fetched ${messages.length} messages`);
+            
+            if (!this.isConnected) {
+                this.updateConnectionStatus(true);
+            }
         } catch (error) {
-            console.error("Failed to fetch messages:", error);
+            this.log('Error fetching messages:', error);
+            
+            this.retryCount++;
+            if (this.retryCount <= this.maxRetries) {
+                this.updateConnectionStatus(false, `Connection error. Retry ${this.retryCount}/${this.maxRetries}...`);
+            } else {
+                this.updateConnectionStatus(false, "Connection failed. Please check your network.");
+            }
         }
     }
 
     private async sendMessage(): Promise<void> {
-        if (!this.inputElement?.value.trim()) {
+        if (!this.inputElement?.value.trim() || !this.isConnected) {
             return;
         }
 
         const username = this.usernameElement?.value.trim() || 'Anonymous';
+        const content = this.inputElement.value.trim();
         
-        // Save username for future use
+        this.submitButton!.disabled = true;
+        this.submitButton!.textContent = "Sending...";
+        
         localStorage.setItem('chatUsername', username);
+
+        this.log('Sending message:', { username, content });
 
         try {
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify({
-                    content: this.inputElement.value,
+                    content: content,
                     username: username
                 })
             });
@@ -322,14 +370,15 @@ class ChatApp {
                 throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
             }
 
-            // Clear input field after successful send
             this.inputElement.value = '';
             
-            // Immediately fetch messages to show the new message
             this.fetchMessages();
         } catch (error) {
             console.error("Failed to send message:", error);
             alert(`Failed to send message: ${error}`);
+        } finally {
+            this.submitButton!.disabled = false;
+            this.submitButton!.textContent = "Send";
         }
     }
 
@@ -364,7 +413,6 @@ class ChatApp {
             this.messagesElement?.appendChild(messageElement);
         });
 
-        // Scroll to bottom
         this.messagesElement.scrollTop = this.messagesElement.scrollHeight;
     }
 
@@ -373,9 +421,15 @@ class ChatApp {
         element.textContent = text;
         return element.innerHTML;
     }
+
+    private log(...args: any[]): void {
+        if (this.debug) {
+            console.log('[ChatApp]', ...args);
+        }
+    }
 }
 
-// Initialize both physics and chat
+
 const sim = new PhysicsSimulation();
 const chatApp = new ChatApp();
 

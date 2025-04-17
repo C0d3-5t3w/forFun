@@ -6,7 +6,6 @@
   border-radius: 8px;
 }
 
-/* Chat Interface Styling */
 .chat-container {
   background-color: #f8f9fa;
   border: 2px solid #3498db;
@@ -27,6 +26,31 @@
   border-top-right-radius: 6px;
   font-weight: bold;
   font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.connection-status {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: normal;
+}
+
+.connection-status.connected {
+  background-color: #2ecc71;
+}
+
+.connection-status.disconnected {
+  background-color: #e74c3c;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }
 
 .chat-messages {
@@ -103,6 +127,12 @@
   padding: 8px 12px;
   border: 1px solid #bdc3c7;
   border-radius: 4px;
+}
+
+#message-input:disabled,
+#send-message:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 #send-message {

@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Testing</title>
-    <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
-    <!-- <link rel="stylesheet" href="../static/css/fonts.css"> -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/fonts.css">
     <link rel="stylesheet" href="../static/css/testing.css">
 </head>
 <body class="retro-content">
@@ -45,7 +45,10 @@
             <section class="chat-section retro-fade-in">
                 <h2>Real-time Chat</h2>
                 <div class="chat-container">
-                    <div class="chat-header">Chat Room</div>
+                    <div class="chat-header">
+                        Chat Room
+                        <span id="connection-status" class="connection-status connected">Connected</span>
+                    </div>
                     <div id="chat-messages" class="chat-messages"></div>
                     <div class="chat-input">
                         <div class="input-row">
@@ -60,7 +63,7 @@
             </section>
         </main>
     </div>
-    <!-- <script src="../static/js/build.js" type="module"></script> -->
+    <script src="../static/js/build.js" type="module"></script>
     <script src="../static/js/testing.js" type="module"></script>
 </body>
 </html>

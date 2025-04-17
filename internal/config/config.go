@@ -8,7 +8,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// Config holds application configuration
 type Config struct {
 	Server struct {
 		Port int    `yaml:"port"`
@@ -27,7 +26,6 @@ type Config struct {
 
 var cfg Config
 
-// Load loads configuration from file
 func Load(path string) error {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -39,7 +37,6 @@ func Load(path string) error {
 		return fmt.Errorf("error parsing config file: %w", err)
 	}
 
-	// Ensure storage directory exists
 	dir := filepath.Dir(cfg.Storage.Path)
 	err = os.MkdirAll(dir, 0755)
 	if err != nil {
@@ -49,7 +46,6 @@ func Load(path string) error {
 	return nil
 }
 
-// Get returns the loaded configuration
 func Get() Config {
 	return cfg
 }

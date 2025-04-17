@@ -12,19 +12,19 @@ import (
 )
 
 func main() {
-	// Initialize API
+
 	err := api.InitAPI()
 	if err != nil {
 		log.Fatalf("Failed to initialize API: %v", err)
 	}
 
-	// Set up API routes
-	api.SetupRoutes()
+	log.Println("API initialized successfully")
 
-	// Set up file server
+	api.SetupRoutes()
+	log.Println("API routes configured")
+
 	fs := http.FileServer(http.Dir("."))
 
-	// Get configuration or use default if not initialized
 	var addr string
 	cfg := config.Get()
 	if cfg.Server.Host != "" && cfg.Server.Port != 0 {
@@ -34,7 +34,6 @@ func main() {
 		fmt.Scanln(&addr)
 	}
 
-	// Set up routes
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		path := filepath.Clean(r.URL.Path)
 		if path == "/" {
@@ -48,8 +47,8 @@ func main() {
 		fs.ServeHTTP(w, r)
 	})
 
-	// Start server
-	fmt.Printf("Server starting on %s\n", addr)
+	log.Printf("Server starting on %s", addr)
+	log.Println("Chat API available at http://" + addr + "/api/messages")
 	err = http.ListenAndServe(addr, nil)
 	if err != nil {
 		log.Fatal("Server failed to start: ", err)
