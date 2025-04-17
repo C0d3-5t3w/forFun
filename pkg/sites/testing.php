@@ -40,8 +40,7 @@
                     <button id="toggle-drag">Toggle Drag</button>
                 </div>
             </section>
-            
-            <!-- New Chat Section -->
+            <!--
             <section class="chat-section retro-fade-in">
                 <h2>Real-time Chat</h2>
                 <div class="chat-container">
@@ -61,6 +60,7 @@
                     </div>
                 </div>
             </section>
+            -->
         </main>
     </div>
     <script src="../static/js/build.js" type="module"></script>
