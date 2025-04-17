@@ -26,6 +26,7 @@
         </section>
     </main>
     <script src="pkg/static/js/build.js" type="module"></script>
+    <script src="pkg/assets/js/dropdown.js" type="module"></script>
     <footer class="retro-footer" style="text-align: center; padding: 20px 0; border-top: 2px solid var(--retro-primary); background-color: var(--retro-background-footer);">
         <p>&copy; <?php echo date("Y"); ?> forFun</p>
     </footer>

@@ -64,6 +64,7 @@
         </main>
     </div>
     <script src="../static/js/build.js" type="module"></script>
+    <script src="../assets/js/dropdown.js" type="module"></script>
     <script src="../static/js/testing.js" type="module"></script>
 </body>
 </html>
