@@ -231,12 +231,167 @@ class PhysicsSimulation {
     }
 }
 
+// Add new interfaces and classes for chat functionality
+interface ChatMessage {
+    id: string;
+    content: string;
+    username: string;
+    timestamp: string;
+}
+
+class ChatApp {
+    private messagesElement: HTMLElement | null = null;
+    private inputElement: HTMLInputElement | null = null;
+    private usernameElement: HTMLInputElement | null = null;
+    private submitButton: HTMLButtonElement | null = null;
+    private apiUrl: string = '/api/messages';
+    private messages: ChatMessage[] = [];
+    private refreshInterval: number = 3000; // 3 seconds
+
+    public initChat(): void {
+        this.messagesElement = document.getElementById('chat-messages');
+        this.inputElement = document.getElementById('message-input') as HTMLInputElement;
+        this.usernameElement = document.getElementById('username-input') as HTMLInputElement;
+        this.submitButton = document.getElementById('send-message') as HTMLButtonElement;
+
+        if (!this.messagesElement || !this.inputElement || !this.submitButton || !this.usernameElement) {
+            console.error("Chat elements not found");
+            return;
+        }
+
+        // Set up event listeners
+        this.submitButton.addEventListener('click', () => this.sendMessage());
+        this.inputElement.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
+            }
+        });
+
+        // Load stored username if available
+        const storedUsername = localStorage.getItem('chatUsername');
+        if (storedUsername) {
+            this.usernameElement.value = storedUsername;
+        }
+
+        // Initial fetch
+        this.fetchMessages();
+
+        // Set up periodic refresh
+        setInterval(() => this.fetchMessages(), this.refreshInterval);
+    }
+
+    private async fetchMessages(): Promise<void> {
+        try {
+            const response = await fetch(this.apiUrl);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const messages: ChatMessage[] = await response.json();
+            this.messages = messages;
+            this.renderMessages();
+        } catch (error) {
+            console.error("Failed to fetch messages:", error);
+        }
+    }
+
+    private async sendMessage(): Promise<void> {
+        if (!this.inputElement?.value.trim()) {
+            return;
+        }
+
+        const username = this.usernameElement?.value.trim() || 'Anonymous';
+        
+        // Save username for future use
+        localStorage.setItem('chatUsername', username);
+
+        try {
+            const response = await fetch(this.apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: this.inputElement.value,
+                    username: username
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+            }
+
+            // Clear input field after successful send
+            this.inputElement.value = '';
+            
+            // Immediately fetch messages to show the new message
+            this.fetchMessages();
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            alert(`Failed to send message: ${error}`);
+        }
+    }
+
+    private renderMessages(): void {
+        if (!this.messagesElement) return;
+
+        this.messagesElement.innerHTML = '';
+
+        if (this.messages.length === 0) {
+            const emptyMessage = document.createElement('p');
+            emptyMessage.className = 'empty-message';
+            emptyMessage.textContent = 'No messages yet. Be the first to send a message!';
+            this.messagesElement.appendChild(emptyMessage);
+            return;
+        }
+
+        this.messages.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'chat-message';
+
+            const timestamp = new Date(message.timestamp);
+            const formattedTime = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            messageElement.innerHTML = `
+                <div class="message-header">
+                    <span class="username">${message.username}</span>
+                    <span class="timestamp">${formattedTime}</span>
+                </div>
+                <div class="message-content">${this.escapeHTML(message.content)}</div>
+            `;
+
+            this.messagesElement?.appendChild(messageElement);
+        });
+
+        // Scroll to bottom
+        this.messagesElement.scrollTop = this.messagesElement.scrollHeight;
+    }
+
+    private escapeHTML(text: string): string {
+        const element = document.createElement('div');
+        element.textContent = text;
+        return element.innerHTML;
+    }
+}
+
+// Initialize both physics and chat
 const sim = new PhysicsSimulation();
-(window as any).initTesting = () => sim.initTesting();
+const chatApp = new ChatApp();
+
+(window as any).initTesting = () => {
+    sim.initTesting();
+    chatApp.initChat();
+};
+
 if (document.readyState === 'loading') {
-    window.addEventListener('DOMContentLoaded', () => sim.initTesting());
+    window.addEventListener('DOMContentLoaded', () => {
+        sim.initTesting();
+        chatApp.initChat();
+    });
 } else {
     sim.initTesting();
+    chatApp.initChat();
 }
 
 export {};

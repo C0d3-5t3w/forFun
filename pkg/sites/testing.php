@@ -40,6 +40,24 @@
                     <button id="toggle-drag">Toggle Drag</button>
                 </div>
             </section>
+            
+            <!-- New Chat Section -->
+            <section class="chat-section retro-fade-in">
+                <h2>Real-time Chat</h2>
+                <div class="chat-container">
+                    <div class="chat-header">Chat Room</div>
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input">
+                        <div class="input-row">
+                            <input type="text" id="username-input" placeholder="Your name (optional)">
+                        </div>
+                        <div class="input-row">
+                            <input type="text" id="message-input" placeholder="Type a message...">
+                            <button id="send-message">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
     <script src="../static/js/build.js" type="module"></script>
