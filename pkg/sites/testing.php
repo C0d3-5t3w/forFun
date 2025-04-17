@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Testing</title>
-    <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/fonts.css">
+    <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
+    <!-- <link rel="stylesheet" href="../static/css/fonts.css"> -->
     <link rel="stylesheet" href="../static/css/testing.css">
 </head>
 <body class="retro-content">
@@ -60,7 +60,7 @@
             </section>
         </main>
     </div>
-    <script src="../static/js/build.js" type="module"></script>
+    <!-- <script src="../static/js/build.js" type="module"></script> -->
     <script src="../static/js/testing.js" type="module"></script>
 </body>
 </html>
