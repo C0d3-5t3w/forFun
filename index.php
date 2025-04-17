@@ -21,8 +21,8 @@
     </header>
     <main>
         <section class="intro fade-in">
-            <h1>Welcome to forFun</h1>
-            <h2>Your interactive playground for creative coding.</h2>
+            <h1>Hello!</h1>
+            <h2>🤘🏼</h2>
         </section>
     </main>
     <script src="pkg/static/js/build.js" type="module"></script>
