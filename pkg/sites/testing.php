@@ -22,8 +22,7 @@
     </header>
     <div>
         <main>
-            <section id="physics-test-room" class="cool-section retro-fade-in testing-format-override">
-                <h2>Physics Engine Testing Room</h2>
+            <section>
                 <div id="physics-container">
                     <canvas id="physics-canvas" width="600" height="400"></canvas>
                 </div>
@@ -44,12 +43,6 @@
         </main>
     </div>
     <script src="../static/js/build.js" type="module"></script>
-    <script type="module">
-      if (document.readyState === 'loading') {
-         window.addEventListener('DOMContentLoaded', initTesting);
-      } else {
-         initTesting();
-      }
-    </script>
+    <script src="../static/js/testing.js" type="module"></script>
 </body>
 </html>
