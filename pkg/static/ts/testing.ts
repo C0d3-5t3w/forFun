@@ -4,6 +4,8 @@ interface Vector {
 }
 
 interface PhysicsObject {
+    playerId: string | null;
+    username: string | null;
     position: Vector;
     velocity: Vector;
     radius: number;
@@ -30,10 +32,7 @@ interface PhysicsEffects {
 class PhysicsSimulation {
     private canvas!: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D | null = null;
-    private objects: PhysicsObject[] = [
-        this.createBall({ x: 100, y: 100 }, { x: 4, y: -2 }, 20, 1, '#e74c3c'),
-        this.createBall({ x: 300, y: 50 }, { x: -3, y: 3 }, 15, 1, '#2ecc71')
-    ];
+    private objects: PhysicsObject[] = [];
     private config: SimulationConfig = {
         gravity: { x: 0, y: 0.5 },
         wind: { x: 0.1, y: 0 },
@@ -54,8 +53,22 @@ class PhysicsSimulation {
         return '#' + ('000000' + hex).slice(-6);
     }
 
-    private createBall(position: Vector, velocity: Vector, radius: number, mass: number, color: string): PhysicsObject {
-        return { position, velocity, radius, mass, color };
+    private createBall(playerId: string | null, username: string | null, position: Vector, velocity: Vector, radius: number, mass: number, color: string): PhysicsObject {
+        return { playerId, username, position, velocity, radius, mass, color };
+    }
+
+    public addPlayerBall(playerId: string, username: string): void {
+        const startX = Math.random() * (this.config.canvasWidth - 100) + 50;
+        const startY = Math.random() * (this.config.canvasHeight - 100) + 50;
+        const startVelX = (Math.random() - 0.5) * 2;
+        const startVelY = (Math.random() - 0.5) * 2;
+        const radius = 15;
+        const mass = 1;
+        const color = this.randomColor();
+
+        const newBall = this.createBall(playerId, username, { x: startX, y: startY }, { x: startVelX, y: startVelY }, radius, mass, color);
+        this.objects.push(newBall);
+        console.log(`Added ball for ${username} (${playerId})`);
     }
 
     public initTesting(): void {
@@ -73,31 +86,9 @@ class PhysicsSimulation {
         this.canvas.width = this.config.canvasWidth;
         this.canvas.height = this.config.canvasHeight;
 
-        this.canvas.addEventListener('click', (e: MouseEvent): void => {
-            const rect = this.canvas.getBoundingClientRect();
-            const clickPos: Vector = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-            const newVelocity: Vector = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
-            const newRadius = Math.random() * 15 + 10;
-            this.objects.push(this.createBall(clickPos, newVelocity, newRadius, 1, this.randomColor()));
-        });
-
         window.addEventListener('keydown', (e: KeyboardEvent): void => {
             const key = e.key.toLowerCase();
-            if (key === 'arrowup') {
-                this.applyForce({ x: 0, y: -2 });
-            } else if (key === 'arrowdown') {
-                this.applyForce({ x: 0, y: 2 });
-            } else if (key === 'arrowleft') {
-                this.applyForce({ x: -2, y: 0 });
-            } else if (key === 'arrowright') {
-                this.applyForce({ x: 2, y: 0 });
-            } else if (key === 'r') {
-                this.objects.length = 0;
-                this.objects.push(
-                    this.createBall({ x: 100, y: 100 }, { x: 4, y: -2 }, 20, 1, '#e74c3c'),
-                    this.createBall({ x: 300, y: 50 }, { x: -3, y: 3 }, 15, 1, '#2ecc71')
-                );
-            } else if (key === 'g') {
+            if (key === 'g') {
                 this.effects.gravityEnabled = !this.effects.gravityEnabled;
                 console.log(`Gravity enabled: ${this.effects.gravityEnabled}`);
             } else if (key === 'w') {
@@ -106,31 +97,6 @@ class PhysicsSimulation {
             } else if (key === 'd') {
                 this.effects.dragEnabled = !this.effects.dragEnabled;
                 console.log(`Drag enabled: ${this.effects.dragEnabled}`);
-            }
-        });
-
-        const controlButtons = [
-            { id: 'force-up',    force: { x: 0, y: -2 } },
-            { id: 'force-down',  force: { x: 0, y: 2 } },
-            { id: 'force-left',  force: { x: -2, y: 0 } },
-            { id: 'force-right', force: { x: 2, y: 0 } }
-        ];
-        controlButtons.forEach(control => {
-            const btn = document.getElementById(control.id);
-            if (btn) {
-                btn.addEventListener('click', () => this.applyForce(control.force));
-            }
-        });
-
-        const toggleButtons = [
-            { id: 'toggle-gravity', action: () => { this.effects.gravityEnabled = !this.effects.gravityEnabled; console.log(`Gravity: ${this.effects.gravityEnabled}`); } },
-            { id: 'toggle-wind',    action: () => { this.effects.windEnabled    = !this.effects.windEnabled;    console.log(`Wind: ${this.effects.windEnabled}`); } },
-            { id: 'toggle-drag',    action: () => { this.effects.dragEnabled    = !this.effects.dragEnabled;    console.log(`Drag: ${this.effects.dragEnabled}`); } }
-        ];
-        toggleButtons.forEach(control => {
-            const btn = document.getElementById(control.id);
-            if (btn) {
-                btn.addEventListener('click', control.action);
             }
         });
 
@@ -177,6 +143,13 @@ class PhysicsSimulation {
             context.fillStyle = obj.color;
             context.fill();
             context.closePath();
+
+            if (obj.username) {
+                context.fillStyle = '#ffffff';
+                context.textAlign = 'center';
+                context.font = '12px Arial';
+                context.fillText(obj.username, obj.position.x, obj.position.y - obj.radius - 5);
+            }
         });
         requestAnimationFrame(() => this.update());
     }
@@ -223,11 +196,14 @@ class PhysicsSimulation {
         obj2.velocity.y -= (impulse * ny) / obj2.mass;
     }
 
-    private applyForce(force: Vector): void {
-        this.objects.forEach((obj: PhysicsObject) => {
-            obj.velocity.x += force.x;
-            obj.velocity.y += force.y;
-        });
+    public applyForce(playerId: string, force: Vector): void {
+        const targetObject = this.objects.find(obj => obj.playerId === playerId);
+        if (targetObject) {
+            targetObject.velocity.x += force.x;
+            targetObject.velocity.y += force.y;
+        } else {
+            console.warn(`Attempted to apply force to non-existent player ID: ${playerId}`);
+        }
     }
 }
 
@@ -251,7 +227,14 @@ class ChatApp {
     private isConnected: boolean = true;
     private retryCount: number = 0;
     private maxRetries: number = 5;
-    private debug: boolean = false;
+    private debug: boolean = true;
+
+    private players: Set<string> = new Set();
+    private physicsSim: PhysicsSimulation;
+
+    constructor(physicsSim: PhysicsSimulation) {
+        this.physicsSim = physicsSim;
+    }
 
     public initChat(): void {
         this.messagesElement = document.getElementById('chat-messages');
@@ -345,6 +328,19 @@ class ChatApp {
         const username = this.usernameElement?.value.trim() || 'Anonymous';
         const content = this.inputElement.value.trim();
         
+        const playerId = username;
+
+        if (!this.players.has(playerId)) {
+            this.players.add(playerId);
+            this.physicsSim.addPlayerBall(playerId, username);
+            this.log(`Player ${username} joined the game.`);
+        }
+
+        if (this.handleCommand(playerId, content)) {
+            this.inputElement.value = '';
+            return;
+        }
+
         this.submitButton!.disabled = true;
         this.submitButton!.textContent = "Sending...";
         
@@ -380,6 +376,36 @@ class ChatApp {
             this.submitButton!.disabled = false;
             this.submitButton!.textContent = "Send";
         }
+    }
+
+    private handleCommand(playerId: string, command: string): boolean {
+        const normalizedCommand = command.toLowerCase().trim();
+        let force: Vector | null = null;
+        const forceMagnitude = 2;
+
+        switch (normalizedCommand) {
+            case '!up':
+                force = { x: 0, y: -forceMagnitude };
+                break;
+            case '!down':
+                force = { x: 0, y: forceMagnitude };
+                break;
+            case '!left':
+                force = { x: -forceMagnitude, y: 0 };
+                break;
+            case '!right':
+                force = { x: forceMagnitude, y: 0 };
+                break;
+            default:
+                return false;
+        }
+
+        if (force) {
+            this.log(`Applying force ${JSON.stringify(force)} to player ${playerId}`);
+            this.physicsSim.applyForce(playerId, force);
+            return true;
+        }
+        return false;
     }
 
     private renderMessages(): void {
@@ -431,7 +457,7 @@ class ChatApp {
 
 
 const sim = new PhysicsSimulation();
-const chatApp = new ChatApp();
+const chatApp = new ChatApp(sim);
 
 (window as any).initTesting = () => {
     sim.initTesting();

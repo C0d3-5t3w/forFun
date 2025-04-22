@@ -40,7 +40,6 @@
                     <button id="toggle-drag">Toggle Drag</button>
                 </div>
             </section>
-            <!--
             <section class="chat-section retro-fade-in">
                 <h2>Real-time Chat</h2>
                 <div class="chat-container">
@@ -54,13 +53,12 @@
                             <input type="text" id="username-input" placeholder="Your name (optional)">
                         </div>
                         <div class="input-row">
-                            <input type="text" id="message-input" placeholder="Type a message...">
+                            <input type="text" id="message-input" placeholder="Type !up, !down, !left, !right to move">
                             <button id="send-message">Send</button>
                         </div>
                     </div>
                 </div>
             </section>
-            -->
         </main>
     </div>
     <script src="../static/js/build.js" type="module"></script>
