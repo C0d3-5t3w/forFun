@@ -8,31 +8,29 @@
     <link rel="stylesheet" href="../static/css/fonts.css">
     <link rel="stylesheet" href="../static/css/testing.css">
 </head>
-<body class="retro-content">
-    <header class="retro-header">
+<body class="container">
+    <header class="site-header">
         <div class="logo">
-            <h1>forFun</h1>
+            <h1>forFun :: Testing</h1>
         </div>
-        <nav class="retro-nav">
+        <nav class="site-nav">
             <ul>
-                <li><a href="../../index.html">Home</a></li>
-                <li><a href="testing.html">Testing</a></li>
+                <li><a href="../../index.php">Home</a></li>
+                <li><a href="testing.php">Testing</a></li>
             </ul>
         </nav>
     </header>
-    <div>
+    <div class="main-content-wrapper">
         <main>
-            <section>
+            <section id="physics-section">
+                <h2>Physics Simulation</h2>
                 <div id="physics-container">
                     <canvas id="physics-canvas" width="600" height="400"></canvas>
                 </div>
             </section>
-            <section id="controls-panel" class="retro-fade-in">
+            <section id="controls-panel" class="fade-in">
+                <h2>Controls</h2>
                 <div style="margin-bottom: 15px;">
-                    <button id="force-up">Up</button>
-                    <button id="force-left">Left</button>
-                    <button id="force-right">Right</button>
-                    <button id="force-down">Down</button>
                 </div>
                 <div>
                     <button id="toggle-gravity">Toggle Gravity</button>
@@ -40,20 +38,20 @@
                     <button id="toggle-drag">Toggle Drag</button>
                 </div>
             </section>
-            <section class="chat-section retro-fade-in">
-                <h2>Real-time Chat</h2>
+            <section class="chat-section fade-in">
+                <h2>Real-time Chat & Game Control</h2>
                 <div class="chat-container">
                     <div class="chat-header">
-                        Chat Room
+                        Game Chat
                         <span id="connection-status" class="connection-status connected">Connected</span>
                     </div>
                     <div id="chat-messages" class="chat-messages"></div>
                     <div class="chat-input">
                         <div class="input-row">
-                            <input type="text" id="username-input" placeholder="Your name (optional)">
+                            <input type="text" id="username-input" placeholder="Your Player Name">
                         </div>
                         <div class="input-row">
-                            <input type="text" id="message-input" placeholder="Type !up, !down, !left, !right to move">
+                            <input type="text" id="message-input" placeholder="Type !up, !down, !left, !right or chat">
                             <button id="send-message">Send</button>
                         </div>
                     </div>
@@ -62,6 +60,5 @@
         </main>
     </div>
     <script src="../static/js/build.js" type="module"></script>
-    <script src="../static/js/testing.js" type="module"></script>
 </body>
 </html>
